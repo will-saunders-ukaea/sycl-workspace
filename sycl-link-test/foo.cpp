@@ -11,7 +11,7 @@ int main(int argc, char **argv){
   sycl::device device{};
   sycl::queue queue{device};
   double * d_a = sycl::malloc_device<double>(N, queue);
-  double * d_b = sycl::malloc_device<double>(1, queue);
+  double * d_b = sycl::malloc_device<double>(N, queue);
   
   std::vector<double> h_a(N);
   for(int ix=0 ; ix<N ; ix++){
@@ -38,6 +38,7 @@ int main(int argc, char **argv){
         local_mem[lid] = d_a[gid];
         id.barrier(sycl::access::fence_space::local_space);
         d_b[gid] = local_mem[(lid + 1) % 32];
+        //d_b[gid] = d_a[gid];
       });
   }).wait_and_throw();
 
